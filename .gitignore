@@ -1,0 +1,6 @@
+node_modules
+.env
+/temp/*
+/public/uploads/*
+*.lock
+package-lock.json
