@@ -1,4 +1,6 @@
-require('dotenv').config();
+require('dotenv').config({
+  path: process.env.NODE_ENV === 'test' ? '.env.test' : '.env',
+});
 
 module.exports = {
   host: process.env.DB_HOST,
@@ -7,12 +9,12 @@ module.exports = {
   password: process.env.DB_PASSWORD,
   database: process.env.DB_DATABASE,
   dialect: process.env.DB_DIALECT || 'postgres',
-  dialectOptions: {
+  /*   dialectOptions: {
     ssl: {
       require: true,
       rejectUnauthorized: false,
     },
-  },
+  }, */
   operatorAliases: false,
   logging: false,
   define: {
