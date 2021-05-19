@@ -33,12 +33,23 @@ module.exports = (sequelize, DataTypes) => {
     },
   });
 
-  User.prototype.checkPassword = (password) => {
+  User.associate = (models) => {
+    User.hasMany(models.Character, {
+      as: 'character',
+      foreignKey: 'user_id',
+      targetKey: 'id',
+    });
+  };
+
+  User.prototype.checkPassword = async function (password) {
     return bcrypt.compare(password, this.password);
   };
 
-  User.prototype.generateToken = () => {
-    return jwt.sign({ userId: this.id }, process.env.APP_SECRET);
+  User.prototype.generateToken = function () {
+    return jwt.sign(
+      { userId: this.id, isAdmin: this.is_admin },
+      process.env.APP_SECRET,
+    );
   };
 
   return User;

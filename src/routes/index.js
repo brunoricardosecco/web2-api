@@ -1,11 +1,8 @@
 const routes = require('express').Router();
 
-const UserController = require('../app/controllers/User');
+const UserController = require('../app/controllers/UserController');
 
-routes.post('/user', UserController.create);
-
-routes.use('/', (_, res) => {
-  res.status(200).json({ message: 'Working on!' });
-});
+routes.post('/user', UserController.store);
+routes.post('/authenticate', UserController.authenticate);
 
 module.exports = routes;
