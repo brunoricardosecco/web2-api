@@ -1,6 +1,6 @@
 const bcrypt = require('bcryptjs');
 
-function encryptPassword(password) {
+async function encryptPassword(password) {
   return bcrypt.hash(password, 8);
 }
 

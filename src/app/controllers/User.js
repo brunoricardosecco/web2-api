@@ -11,13 +11,13 @@ class UserController {
         'passwordConfirmation',
       ];
 
-      for (const field of requiredFields) {
+      requiredFields.some((field) => {
         if (!request.body[field]) {
-          return response
-            .status(400)
-            .json({ message: `Missing param ${field}` });
+          response.status(400).json({ message: `Missing param ${field}` });
+          return true;
         }
-      }
+        return false;
+      });
 
       const { name, nickname, email, password, passwordConfirmation } =
         request.body;
@@ -28,11 +28,25 @@ class UserController {
           .json({ message: 'Invalid param passwordConfirmation' });
       }
 
+      const existsUser = await User.findOne({
+        where: {
+          email,
+        },
+      });
+
+      if (existsUser) {
+        return response
+          .status(400)
+          .json({ message: 'This email already have an account' });
+      }
+
+      const hashedPassword = await encryptPassword(password);
+
       const user = await User.create({
         name,
         nickname,
         email,
-        password,
+        password: hashedPassword,
       });
 
       return response.status(201).json({ user });
