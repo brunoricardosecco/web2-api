@@ -1,3 +1,5 @@
+const path = require('path');
+
 const { Character, User } = require('../models');
 
 class CharacterController {
@@ -27,6 +29,7 @@ class CharacterController {
 
       const { userId, name, nickname } = request.body;
       const { file } = request;
+      console.log({ file });
 
       const existsUser = await User.findByPk(userId);
 
@@ -38,10 +41,23 @@ class CharacterController {
         user_id: userId,
         name,
         nickname,
-        photo: file.filename,
+        photo: file.path,
       });
 
       return response.status(201).json({ character });
+    } catch (error) {
+      console.log(error);
+      return response.status(500).json({ message: 'Internal server error' });
+    }
+  }
+
+  async showCharacterPhoto(request, response) {
+    try {
+      const { filename } = request.params;
+      const dirname = path.resolve();
+      const fullFilePath = path.join(dirname, `public/uploads/${filename}`);
+
+      return response.sendFile(fullFilePath);
     } catch (error) {
       console.log(error);
       return response.status(500).json({ message: 'Internal server error' });

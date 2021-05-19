@@ -19,7 +19,7 @@ const upload = multer({
 
 routes.post('/user', UserController.store);
 routes.post('/authenticate', UserController.authenticate);
-routes.get('/public/uploads/:id');
+routes.get('/public/uploads/:filename', CharacterController.showCharacterPhoto);
 
 routes.use(authMiddleware);
 

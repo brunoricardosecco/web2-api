@@ -4,6 +4,7 @@ require('dotenv').config({
 
 const express = require('express');
 const cors = require('cors');
+const morgan = require('morgan');
 const routes = require('./routes');
 
 class AppController {
@@ -14,6 +15,7 @@ class AppController {
   }
 
   middlewares() {
+    this.express.use(morgan('dev'));
     this.express.use(express.static('public'));
     this.express.use(express.json());
     this.express.use(express.urlencoded({ extended: false }));
