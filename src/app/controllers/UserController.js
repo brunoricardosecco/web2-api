@@ -12,15 +12,15 @@ class UserController {
         'isAdmin',
       ];
 
-      requiredFields.some((field) => {
+      for (const field of requiredFields) {
         if (field === 'isAdmin') return false;
 
         if (!request.body[field]) {
-          response.status(400).json({ message: `Missing param ${field}` });
-          return true;
+          return response
+            .status(400)
+            .json({ message: `Missing param ${field}` });
         }
-        return false;
-      });
+      }
 
       const {
         name,
@@ -100,7 +100,7 @@ class UserController {
 
       const access_token = existsUser.generateToken();
 
-      response.status(200).json({ user: existsUser, access_token });
+      return response.status(200).json({ user: existsUser, access_token });
     } catch (error) {
       console.log(error);
       return response.status(500).json({ message: 'Internal server error' });
