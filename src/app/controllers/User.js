@@ -9,9 +9,12 @@ class UserController {
         'email',
         'password',
         'passwordConfirmation',
+        'isAdmin',
       ];
 
       requiredFields.some((field) => {
+        if (field === 'isAdmin') return false;
+
         if (!request.body[field]) {
           response.status(400).json({ message: `Missing param ${field}` });
           return true;
@@ -19,8 +22,14 @@ class UserController {
         return false;
       });
 
-      const { name, nickname, email, password, passwordConfirmation } =
-        request.body;
+      const {
+        name,
+        nickname,
+        email,
+        password,
+        passwordConfirmation,
+        isAdmin = false,
+      } = request.body;
 
       if (password !== passwordConfirmation) {
         return response
@@ -47,6 +56,7 @@ class UserController {
         nickname,
         email,
         password: hashedPassword,
+        is_admin: isAdmin,
       });
 
       return response.status(201).json({ user });
