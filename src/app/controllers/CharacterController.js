@@ -1,4 +1,5 @@
 const path = require('path');
+const { Op } = require('sequelize');
 
 const { Character, User } = require('../models');
 
@@ -13,7 +14,7 @@ class CharacterController {
           .json({ message: 'only admin users can post a new character' });
       }
 
-      const requiredFields = ['userId', 'name', 'nickname'];
+      const requiredFields = ['name', 'nickname'];
 
       for (const field of requiredFields) {
         if (!request.body[field]) {
@@ -27,9 +28,9 @@ class CharacterController {
         return response.status(400).json({ message: 'Missing param image' });
       }
 
-      const { userId, name, nickname } = request.body;
+      const { name, nickname } = request.body;
+      const { userId } = request;
       const { file } = request;
-      console.log({ file });
 
       const existsUser = await User.findByPk(userId);
 
@@ -41,10 +42,28 @@ class CharacterController {
         user_id: userId,
         name,
         nickname,
-        photo: file.path,
+        photo: file.filename,
       });
 
       return response.status(201).json({ character });
+    } catch (error) {
+      console.log(error);
+      return response.status(500).json({ message: 'Internal server error' });
+    }
+  }
+
+  async index(request, response) {
+    try {
+      const { name = '' } = request.query;
+      const characters = await Character.findAll({
+        where: {
+          name: {
+            [Op.substring]: name,
+          },
+        },
+      });
+
+      return response.status(200).json({ characters });
     } catch (error) {
       console.log(error);
       return response.status(500).json({ message: 'Internal server error' });

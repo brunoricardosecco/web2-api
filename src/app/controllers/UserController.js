@@ -13,7 +13,7 @@ class UserController {
       ];
 
       for (const field of requiredFields) {
-        if (field === 'isAdmin') return false;
+        if (field === 'isAdmin') break;
 
         if (!request.body[field]) {
           return response
@@ -70,15 +70,13 @@ class UserController {
     try {
       const requiredFields = ['email', 'password'];
 
-      requiredFields.some((field) => {
-        if (field === 'isAdmin') return false;
-
+      for (const field of requiredFields) {
         if (!request.body[field]) {
-          response.status(400).json({ message: `Missing param ${field}` });
-          return true;
+          return response
+            .status(400)
+            .json({ message: `Missing param ${field}` });
         }
-        return false;
-      });
+      }
 
       const { email, password } = request.body;
 
@@ -89,18 +87,39 @@ class UserController {
       });
 
       if (!existsUser) {
-        response.status(400).json({ message: 'Invalid email or password' });
+        return response
+          .status(400)
+          .json({ message: 'Invalid email or password' });
       }
 
       const isValidPassword = await existsUser.checkPassword(password);
 
       if (!isValidPassword) {
-        response.status(400).json({ message: 'Invalid email or password' });
+        return response
+          .status(400)
+          .json({ message: 'Invalid email or password' });
       }
 
       const access_token = existsUser.generateToken();
 
       return response.status(200).json({ user: existsUser, access_token });
+    } catch (error) {
+      console.log(error);
+      return response.status(500).json({ message: 'Internal server error' });
+    }
+  }
+
+  async findUser(request, response) {
+    try {
+      const { userId } = request;
+
+      const user = await User.findByPk(userId);
+
+      if (!user) {
+        return response.status(404).json({ message: 'User not found' });
+      }
+
+      return response.status(200).json({ user });
     } catch (error) {
       console.log(error);
       return response.status(500).json({ message: 'Internal server error' });

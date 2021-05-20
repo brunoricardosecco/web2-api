@@ -23,6 +23,9 @@ routes.get('/public/uploads/:filename', CharacterController.showCharacterPhoto);
 
 routes.use(authMiddleware);
 
+routes.get('/user', UserController.findUser);
+
 routes.post('/character', upload.single('image'), CharacterController.store);
+routes.get('/character', CharacterController.index);
 
 module.exports = routes;
