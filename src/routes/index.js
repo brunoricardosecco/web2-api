@@ -18,6 +18,7 @@ const upload = multer({
   }),
 });
 
+routes.get('/', (_, res) => res.status(200).json({ message: 'connected' }));
 routes.post('/user', cache.invalidate(), UserController.store);
 routes.post('/authenticate', UserController.authenticate);
 routes.get(
