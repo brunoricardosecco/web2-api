@@ -34,12 +34,12 @@ module.exports = {
     password: process.env.DB_PASSWORD,
     database: process.env.DB_DATABASE,
     dialect: process.env.DB_DIALECT || 'postgres',
-    /* dialectOptions: {
+    dialectOptions: {
       ssl: {
         require: true,
         rejectUnauthorized: false,
       },
-    }, */
+    },
     operatorAliases: false,
     logging: false,
     define: {
