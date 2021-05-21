@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "start": "node src/server.js",
-    "start:dev": "DEBUG=sequelize:sql* nodemon src/server.js"
+    "start:dev": "DEBUG=sequelize:sql* nodemon src/server.js",
+    "start:test": "DEBUG=sequelize:sql* NODE_ENV=test nodemon src/server.js"
   },
   "author": "",
   "license": "ISC",
