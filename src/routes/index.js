@@ -5,6 +5,7 @@ const UserController = require('../app/controllers/UserController');
 const CharacterController = require('../app/controllers/CharacterController');
 
 const authMiddleware = require('../app/middlewares/auth');
+const cache = require('../config/redis');
 
 const upload = multer({
   storage: multer.diskStorage({
@@ -17,15 +18,24 @@ const upload = multer({
   }),
 });
 
-routes.post('/user', UserController.store);
+routes.post('/user', cache.invalidate(), UserController.store);
 routes.post('/authenticate', UserController.authenticate);
-routes.get('/public/uploads/:filename', CharacterController.showCharacterPhoto);
+routes.get(
+  '/public/uploads/:filename',
+  cache.route(),
+  CharacterController.showCharacterPhoto,
+);
 
 routes.use(authMiddleware);
 
-routes.get('/user', UserController.findUser);
+routes.get('/user', cache.route(), UserController.findUser);
 
-routes.post('/character', upload.single('image'), CharacterController.store);
-routes.get('/character', CharacterController.index);
+routes.post(
+  '/character',
+  cache.invalidate('/character?name='),
+  upload.single('image'),
+  CharacterController.store,
+);
+routes.get('/character', cache.route(), CharacterController.index);
 
 module.exports = routes;

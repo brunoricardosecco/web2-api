@@ -54,6 +54,7 @@ class CharacterController {
 
   async index(request, response) {
     try {
+      console.log('TESTEEE');
       const { name = '' } = request.query;
       const characters = await Character.findAll({
         where: {
